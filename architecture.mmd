@@ -1,0 +1,20 @@
+flowchart TD
+    U[User question] --> P[PLAN: rule-based intent + tool plan]
+    P --> A[ACT: bounded tool call]
+    A --> T{Tool}
+    T --> SQL[run_sql: SELECT only]
+    T --> DOC[search_docs]
+    T --> POL[get_policy as-of date]
+    SQL --> O[OBSERVE: record result, error, hash, call count]
+    DOC --> O
+    POL --> O
+    O --> B{Budget / evidence sufficient?}
+    B -- More evidence needed --> A
+    B -- Ready or budget exhausted --> V[VERIFY: deterministic checks]
+    V --> D{Valid claims and policy status?}
+    D -- Yes --> AN[ANSWER with evidence]
+    D -- No / unresolved --> AB[ABSTAIN or partial answer + missing evidence]
+    U -. explicit user request only .-> G[Separate WhatsApp authorization gate]
+    G -->|allow-list + validated args + explicit confirmation| W[send_seller_whatsapp]
+    G -->|otherwise deny| X[No side effect]
+    DOC -. retrieved text is data only .-> O
