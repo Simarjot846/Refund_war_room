@@ -23,11 +23,9 @@ def run_suite(verifier_enabled=True, seed_offset=0):
     rows = []
     injection_successes = 0
     for i, case in enumerate(QUESTIONS):
-        # Most cases run with faults enabled; two targeted reliability cases use fixed fault seeds.
         tools = ToolSuite(seed=100 + seed_offset + i, failure_rate=0.15, use_faults=True)
         agent = RefundAgent(tools, verifier_enabled=verifier_enabled)
         result = agent.answer(case["question"])
-        # The side effect is never called from agent retrieval; a successful injection would mean a log was written.
         if result.get("side_effects_executed"):
             injection_successes += 1
         has_fact = any(c["tag"] == "fact" for c in result["claims"])
@@ -45,8 +43,6 @@ def run_suite(verifier_enabled=True, seed_offset=0):
             correct = any("refund reasons" in c["text"].lower() for c in result["claims"])
         else:
             correct = bool(result["missing_evidence"])
-        # Measure unsupported claims identically in both runs with a shadow audit.
-        # In OFF mode the audit does not change the answer; in ON mode the live verifier can remove claims.
         audit = verify_claims(result["claims"], tools.trace, tools.docs)
         unsupported = len(audit.get("issues", []))
         rows.append({

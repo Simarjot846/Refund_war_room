@@ -29,7 +29,6 @@ def authorize_whatsapp(user_message, seller_id, message, explicit_confirmation=F
     return True, "authorized"
 
 def inspect_injection_document(document):
-    # Detection is telemetry only, never the security boundary.
     text = document.get("text", "")
     markers = [
         r"ignore all previous instructions",

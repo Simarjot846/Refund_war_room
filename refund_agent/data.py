@@ -34,7 +34,6 @@ def generate_data():
             FOREIGN KEY(order_id) REFERENCES orders(order_id)
         )
     """)
-    # Deterministic synthetic data. Tier-3 orders and refunds rise in the latest week.
     order_id = 1
     refund_id = 1
     for day in range(1, 15):
@@ -48,7 +47,6 @@ def generate_data():
             seller = 40218 if i % 11 == 0 else 41000 + i
             cur.execute("INSERT INTO orders VALUES (?,?,?,?,?,?,?)",
                         (order_id, pincode, tier, zone, payment, date, seller))
-            # Refund propensity rises for Tier-3 in the last week; reasons vary.
             should_refund = (i % 13 == 0) or (day >= 8 and tier3 and i % 4 == 0)
             if should_refund:
                 reason = ["late_delivery", "damaged_item", "wrong_item", "not_received"][i % 4]

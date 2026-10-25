@@ -43,7 +43,6 @@ class ToolSuite:
     def search_docs(self, query):
         self._fault("search_docs")
         terms = [x.lower() for x in re.findall(r"[a-zA-Z0-9₹]+", query) if len(x) > 2]
-        # Simple deterministic lexical retrieval; all returned text remains untrusted data.
         ranked = []
         for d in self.docs:
             text = (d.get("text","") + " " + d.get("id","") + " " + d.get("name","")).lower()
@@ -70,7 +69,6 @@ class ToolSuite:
         return result
 
     def send_seller_whatsapp(self, seller_id, message, *, authorized=False):
-        # Defense in depth: the gate must explicitly authorize this call.
         if not authorized:
             raise PermissionError("WhatsApp side effect denied: missing explicit authorization")
         self._fault("send_seller_whatsapp")

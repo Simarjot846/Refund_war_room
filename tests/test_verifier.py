@@ -110,8 +110,6 @@ class VerifierTests(unittest.TestCase):
                     }],
                 },
             ):
-                # This mock-based test checks the removal logic only if
-                # the normal answer flow reaches verification.
                 try:
                     result = agent.answer("Tell me the refund trend")
                 except RuntimeError:
